@@ -5,12 +5,12 @@ import sys
 import tensorflow as tf
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
+import datetime
 
-
-EPOCHS = 15
+EPOCHS = 3
 IMG_WIDTH = 30
 IMG_HEIGHT = 30
-NUM_CATEGORIES = 43
+NUM_CATEGORIES = 3
 TEST_SIZE = 0.3
 
 
@@ -33,8 +33,19 @@ def main():
     )
     # Get a compiled neural network
     model = get_model()
+    log_dir = "logs/fit/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+    tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
     # Fit model on training data
-    history = model.fit(x_train, y_train, batch_size=32, epochs=EPOCHS, validation_data=(x_test, y_test))
+
+    my_callbacks = [
+        tf.keras.callbacks.EarlyStopping(patience=2),
+        tf.keras.callbacks.ModelCheckpoint(filepath='traffic_classifier.h5'),
+        tf.keras.callbacks.TensorBoard(log_dir='./logs'),
+    ]
+    history = model.fit(x_train, y_train, batch_size=32, epochs=EPOCHS, validation_data=(x_test, y_test),callbacks=my_callbacks)
+
+
+
     filename = 'traffic_classifier.h5'
     model.save(filename)
     print(f"Model saved to {filename}.")
@@ -109,6 +120,10 @@ def get_model():
     model.compile(optimizer=tf.keras.optimizers.SGD(learning_rate=1e-4),
                   loss=tf.keras.losses.categorical_crossentropy,
                   metrics=["acc"])
+
+
+
+
 
     return model
 
