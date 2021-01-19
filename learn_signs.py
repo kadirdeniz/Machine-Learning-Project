@@ -7,17 +7,17 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 import datetime
 
-EPOCHS = 3
+EPOCHS = 15
 IMG_WIDTH = 30
 IMG_HEIGHT = 30
-NUM_CATEGORIES = 3
+NUM_CATEGORIES = 43
 TEST_SIZE = 0.3
 
 
 def main():
     # Check command-line arguments
     if len(sys.argv) not in [2, 3]:
-        sys.exit("Usage: python traffic.py data_directory [model.h5]")
+        sys.exit("Usage: python learn_signs.py data_directory [model.h5]")
 
     # Get image arrays and labels for all image files
     images, labels = load_data(sys.argv[1])
@@ -33,8 +33,6 @@ def main():
     )
     # Get a compiled neural network
     model = get_model()
-    log_dir = "logs/fit/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-    tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
     # Fit model on training data
 
     my_callbacks = [
